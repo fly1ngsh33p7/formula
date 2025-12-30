@@ -1,0 +1,26 @@
+{
+  "name": "formula",
+  "version": "0.1.0",
+  "description": "My Implementation of Tsoding/formula to tinker with",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fly1ngsh33p7/formula.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fly1ngsh33p7/formula/issues"
+  },
+  "homepage": "https://github.com/fly1ngsh33p7/formula#readme",
+  "devDependencies": {
+    "ts-loader": "^9.5.4",
+    "typescript": "^5.9.3",
+    "webpack": "^5.104.1",
+    "webpack-cli": "^6.0.1"
+  }
+}
