@@ -62,7 +62,7 @@ function clear() {
     context.fillRect(0, 0, game.width, game.height);
 }
 
-function place_point(p, special = false, point_size = {x: 8, y: 8}, dont_add_to_placed_points = false) {
+function place_point(p, special = false, point_size = {x: 10, y: 10}, dont_add_to_placed_points = false) {
     context.fillStyle = special ? SPECIAL_COLOR : FOREGROUND_COLOR;
     // account for point size so it's centered
     context.fillRect(
@@ -93,11 +93,11 @@ function place_line(point1, point2, line_thickness = 1, special = false) {
 
 function place_axis_lines() {
     // x axis
-    place_point(get_on_screen_point_representation(new Point2D(x=-1, y=0)), special=false, point_size={x: game.width, y: 1}, dont_add_to_placed_points=true);
-    place_point(get_on_screen_point_representation(new Point2D(x=1, y=0)), special=false, point_size={x: game.width, y: 1}, dont_add_to_placed_points=true);
+    place_point(get_on_screen_point_representation(new Point2D(x=-1, y=0)), special=false, point_size={x: game.width, y: 2}, dont_add_to_placed_points=true);
+    place_point(get_on_screen_point_representation(new Point2D(x=1, y=0)), special=false, point_size={x: game.width, y: 2}, dont_add_to_placed_points=true);
     // y axis
-    place_point(get_on_screen_point_representation(new Point2D(x=0, y=-1)), special=false, point_size={x: 1, y: game.height}, dont_add_to_placed_points=true);
-    place_point(get_on_screen_point_representation(new Point2D(x=0, y=1)), special=false, point_size={x: 1, y: game.height}, dont_add_to_placed_points=true);
+    place_point(get_on_screen_point_representation(new Point2D(x=0, y=-1)), special=false, point_size={x: 2, y: game.height}, dont_add_to_placed_points=true);
+    place_point(get_on_screen_point_representation(new Point2D(x=0, y=1)), special=false, point_size={x: 2, y: game.height}, dont_add_to_placed_points=true);
 }
 
 
@@ -112,7 +112,7 @@ console.log(context);
 console.log(`Game size: ${game.width}x${game.height}`);
 
 clear();
-// place_axis_lines();
+
 
 // place_point(get_on_screen_point_representation(new Point2D(1, 1)), special=true);
 
@@ -121,22 +121,7 @@ clear();
 // place_point(get_on_screen_point_representation(new Point3D(x=0.2, y=0.2, z=2).project_to_2d()));
 
 
-// (function print_placed_points(show_size = false, show_color = false) {
-//     console.log("Placed points:");
-//     for (let i = 0; i < points_that_have_been_placed.length; i++) {
-//         let p = points_that_have_been_placed[i];
 
-//         let string_to_print = `${i}  - (x: ${p.point.x.toFixed(2)}, y: ${p.point.y.toFixed(2)})`;
-//         if (show_size) {
-//             string_to_print += ` size=(${p.point_size.x}x${p.point_size.y})`;
-//         }
-//         if (show_color) {
-//             string_to_print += ` color=${p.color}`;
-//         }
-
-//         console.log(string_to_print);
-//     }
-// })(show_color=true, show_size=true);
 
 
 const FPS = 60;
@@ -170,6 +155,7 @@ let rotation_angle = 0;
 
 function draw_frame() {
     clear();
+    place_axis_lines();
 
     let delta_time = 1 / FPS; // in seconds
 
@@ -195,16 +181,26 @@ function draw_frame() {
             );
         }
     }
-    // place_point(get_on_screen_point_representation(new Point3D(x=0.5, y=0.5, z=1 + z_offset).project_to_2d()));
-    // place_point(get_on_screen_point_representation(new Point3D(x=-0.5, y=0.5, z=1 + z_offset).project_to_2d()));
-    // place_point(get_on_screen_point_representation(new Point3D(x=0.5, y=-0.5, z=1 + z_offset).project_to_2d()));
-    // place_point(get_on_screen_point_representation(new Point3D(x=-0.5, y=-0.5, z=1 + z_offset).project_to_2d()));
-
-
+    
     setTimeout(draw_frame, 1000 / FPS); // reschedule next frame
 }
 
 setTimeout(draw_frame, 1000 / FPS); // 1000ms divided by FPS gives the interval in ms
 
 
+// (function print_placed_points(show_size = false, show_color = false) {
+//     console.log("Placed points:");
+//     for (let i = 0; i < points_that_have_been_placed.length; i++) {
+//         let p = points_that_have_been_placed[i];
 
+//         let string_to_print = `${i}  - (x: ${p.point.x.toFixed(2)}, y: ${p.point.y.toFixed(2)})`;
+//         if (show_size) {
+//             string_to_print += ` size=(${p.point_size.x}x${p.point_size.y})`;
+//         }
+//         if (show_color) {
+//             string_to_print += ` color=${p.color}`;
+//         }
+
+//         console.log(string_to_print);
+//     }
+// })(show_color=true, show_size=true);
