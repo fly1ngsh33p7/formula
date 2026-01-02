@@ -1,5 +1,6 @@
 const BACKGROUND_COLOR = "#101010";
 const FOREGROUND_COLOR = "#50FF50";
+const LINE_COLOR = "#00ddfeff";
 const SPECIAL_COLOR = "#ffffffff";
 
 class Point2D {
@@ -61,7 +62,7 @@ function clear() {
     context.fillRect(0, 0, game.width, game.height);
 }
 
-function place_point(p, special = false, point_size = {x: 10, y: 10}, dont_add_to_placed_points = false) {
+function place_point(p, special = false, point_size = {x: 8, y: 8}, dont_add_to_placed_points = false) {
     context.fillStyle = special ? SPECIAL_COLOR : FOREGROUND_COLOR;
     // account for point size so it's centered
     context.fillRect(
@@ -75,6 +76,19 @@ function place_point(p, special = false, point_size = {x: 10, y: 10}, dont_add_t
     if (!dont_add_to_placed_points) {
         points_that_have_been_placed.push({point: p, point_size: point_size, color: context.fillStyle});
     }
+}
+
+function place_line(point1, point2, line_thickness = 1, special = false) {
+    context.beginPath(); // "initialize Turtle"
+    
+    context.moveTo(point1.x, point1.y); // move Turtle to start point
+    context.lineTo(point2.x, point2.y); // draw line to end point
+
+    // set line style
+    context.lineWidth = line_thickness;
+    context.strokeStyle = special ? SPECIAL_COLOR : LINE_COLOR;
+    
+    context.stroke(); // actually draw the line
 }
 
 function place_axis_lines() {
@@ -129,16 +143,26 @@ const FPS = 60;
 
 let cube_vertices = [
     // first "plane"
-    new Point3D(x=0.25, y=0.25, z=0.25),
-    new Point3D(x=-0.25, y=0.25, z=0.25),
-    new Point3D(x=0.25, y=-0.25, z=0.25),
-    new Point3D(x=-0.25, y=-0.25, z=0.25),
+    new Point3D(x=0.25, y=0.25, z=0.25),  // vertex index 0
+    new Point3D(x=-0.25, y=0.25, z=0.25), // vertex index 1
+    new Point3D(x=-0.25, y=-0.25, z=0.25), // vertex index 2
+    new Point3D(x=0.25, y=-0.25, z=0.25),// vertex index 3
 
     // second "plane"
-    new Point3D(x=0.25, y=0.25, z=-0.25),
-    new Point3D(x=-0.25, y=0.25, z=-0.25),
-    new Point3D(x=0.25, y=-0.25, z=-0.25),
-    new Point3D(x=-0.25, y=-0.25, z=-0.25),
+    new Point3D(x=0.25, y=0.25, z=-0.25),   // vertex index 4
+    new Point3D(x=-0.25, y=0.25, z=-0.25),  // vertex index 5
+    new Point3D(x=-0.25, y=-0.25, z=-0.25),  // vertex index 6
+    new Point3D(x=0.25, y=-0.25, z=-0.25), // vertex index 7
+]
+
+let faces = [ // indices of vertices that make up each face
+    [0, 1, 2, 3], // front face
+    [4, 5, 6, 7], // back face
+    // connect pairs of vertices from front and back faces, making the side faces
+    [0, 4],
+    [1, 5],
+    [2, 6],
+    [3, 7],
 ]
 
 let z_offset = 1;
@@ -155,10 +179,22 @@ function draw_frame() {
     // z_offset += 1 * delta_time; // move 1 unit per second
 
 
+    // draw cube corner points
     for (const vertex of cube_vertices) {
         place_point(get_on_screen_point_representation(vertex.rotate_around_y_axis(rotation_angle).translate_point_in_z_axis(z_offset).project_to_2d()));
     }
 
+    for (const face of faces) {
+        for (let i = 0; i < face.length; i++) {
+            let vertex_a = cube_vertices[face[i]];
+            let vertex_b = cube_vertices[face[(i + 1) % face.length]]; // wrap around last to first vertex
+
+            place_line(
+                get_on_screen_point_representation(vertex_a.rotate_around_y_axis(rotation_angle).translate_point_in_z_axis(z_offset).project_to_2d()),
+                get_on_screen_point_representation(vertex_b.rotate_around_y_axis(rotation_angle).translate_point_in_z_axis(z_offset).project_to_2d()),
+            );
+        }
+    }
     // place_point(get_on_screen_point_representation(new Point3D(x=0.5, y=0.5, z=1 + z_offset).project_to_2d()));
     // place_point(get_on_screen_point_representation(new Point3D(x=-0.5, y=0.5, z=1 + z_offset).project_to_2d()));
     // place_point(get_on_screen_point_representation(new Point3D(x=0.5, y=-0.5, z=1 + z_offset).project_to_2d()));
