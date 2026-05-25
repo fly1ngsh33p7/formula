@@ -12,7 +12,7 @@ export class Object {
         this.faces = [];
     }
 
-    draw() {
+    draw(current_frame_time) {
         throw new Error("draw() method not implemented in subclass");
     }
 }

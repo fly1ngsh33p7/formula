@@ -2,72 +2,36 @@ import { Point2D } from './classes/Point2D.js';
 import { Point3D } from './classes/Point3D.js';
 import { Cube } from './classes/Cube.js';
 import { BACKGROUND_COLOR, FOREGROUND_COLOR, LINE_COLOR, SPECIAL_COLOR, FPS } from './utils/constants.js';
+import { clear, place_point, get_on_screen_point_representation } from './classes/common_stuff_that_needs_to_be_accessible_somewhere_else.js';
 
-function get_on_screen_point_representation(p) {
-    // because of "the formula" we need to translate from -1..1 to 0..width/height
-    // if we add 1 (to -1..1) we get 0..2, which is easier to convert (so -1..1 => 0..2 => 0..width/height)
-    // we need to normalize it so we can just multiply it by the screen size ( -1..1 => 0..2 => 0..1 => 0..width/height)
-    return new Point2D(
-        (p.x + 1)/2 * game.width,
-        (1 - (p.y + 1)/2) * game.height, // y is inverted on screen so that negative is down
-    );
+const game = document.getElementById("game");
+if (!game) {
+    throw new Error("Canvas with id 'game' not found");
+}
+const context = game.getContext("2d");
+if (!context) {
+    throw new Error("Could not get 2D context");
 }
 
-function clear() {
-    context.fillStyle = BACKGROUND_COLOR;
-    context.fillRect(0, 0, game.width, game.height);
-}
 
-function place_point(p, special = false, point_size = {x: 10, y: 10}, dont_add_to_placed_points = false) {
-    context.fillStyle = special ? SPECIAL_COLOR : FOREGROUND_COLOR;
-    // account for point size so it's centered
-    context.fillRect(
-        (p.x - point_size.x / 2),
-        (p.y - point_size.y / 2),
-        point_size.x,
-        point_size.y,
-    );
-
-    // add to placed points
-    if (!dont_add_to_placed_points) {
-        points_that_have_been_placed.push({point: p, point_size: point_size, color: context.fillStyle});
-    }
-}
-
-function place_line(point1, point2, line_thickness = 1, special = false) {
-    context.beginPath(); // "initialize Turtle"
-    
-    context.moveTo(point1.x, point1.y); // move Turtle to start point
-    context.lineTo(point2.x, point2.y); // draw line to end point
-
-    // set line style
-    context.lineWidth = line_thickness;
-    context.strokeStyle = special ? SPECIAL_COLOR : LINE_COLOR;
-    
-    context.stroke(); // actually draw the line
-}
-
-function place_axis_lines() {
+function place_axis_lines(context) {
     // x axis
-    place_point(get_on_screen_point_representation(new Point2D(-1, 0)), false, {x: game.width, y: 2}, true);
-    place_point(get_on_screen_point_representation(new Point2D(1, 0)), false, {x: game.width, y: 2}, true);
+    place_point(get_on_screen_point_representation(new Point2D(-1, 0), game.width, game.height), false, {x: game.width, y: 2}, context);
+    place_point(get_on_screen_point_representation(new Point2D(1, 0), game.width, game.height), false, {x: game.width, y: 2}, context);
     // y axis
-    place_point(get_on_screen_point_representation(new Point2D(0, -1)), false, {x: 2, y: game.height}, true);
-    place_point(get_on_screen_point_representation(new Point2D(0, 1)), false, {x: 2, y: game.height}, true);
+    place_point(get_on_screen_point_representation(new Point2D(0, -1), game.width, game.height), false, {x: 2, y: game.height}, context);
+    place_point(get_on_screen_point_representation(new Point2D(0, 1), game.width, game.height), false, {x: 2, y: game.height}, context);
 }
-
 
 // game.width = window.innerWidth - 10;
 // game.height = window.innerHeight - 10;
-
-let context = game.getContext("2d")// as CanvasRenderingContext2D;
 
 console.log(game);
 console.log(context);
 
 console.log(`Game size: ${game.width}x${game.height}`);
 
-clear();
+clear(context);
 
 
 let cube_vertices = [
@@ -97,11 +61,13 @@ let faces = [ // indices of vertices that make up each face
 let z_offset = 1;
 let rotation_angle = 0;
 
-let cube = new Cube(new Point3D(0, 0, 3), 0.25);
+let cube = new Cube(new Point3D(0.25, 0, 0.5), 0.2, game, context);
+
+let current_frame = 0;
 
 function draw_frame() {
-    clear();
-    place_axis_lines();
+    clear(context);
+    // place_axis_lines(context);
 
     let delta_time = 1 / FPS; // in seconds
 
@@ -110,11 +76,12 @@ function draw_frame() {
     
     // z_offset += 1 * delta_time; // move 1 unit per second
 
-    cube.draw();
+    cube.draw(current_frame * delta_time);
+    
 
     // // draw cube corner points
     // for (const vertex of cube_vertices) {
-    //     place_point(get_on_screen_point_representation(vertex.rotate_around_y_axis(rotation_angle).translate_point_in_z_axis(z_offset).project_to_2d()));
+    //     place_point(get_on_screen_point_representation(vertex.rotate_around_y_axis(rotation_angle).translate_point_in_z_axis(z_offset).project_to_2d(), game.width, game.height), false, {x: 10, y: 10}, context);
     // }
 
     // for (const face of faces) {
@@ -123,13 +90,16 @@ function draw_frame() {
     //         let vertex_b = cube_vertices[face[(i + 1) % face.length]]; // wrap around last to first vertex
 
     //         place_line(
-    //             get_on_screen_point_representation(vertex_a.rotate_around_y_axis(rotation_angle).translate_point_in_z_axis(z_offset).project_to_2d()),
-    //             get_on_screen_point_representation(vertex_b.rotate_around_y_axis(rotation_angle).translate_point_in_z_axis(z_offset).project_to_2d()),
+    //             get_on_screen_point_representation(vertex_a.rotate_around_y_axis(rotation_angle).translate_point_in_z_axis(z_offset).project_to_2d(), game.width, game.height),
+    //             get_on_screen_point_representation(vertex_b.rotate_around_y_axis(rotation_angle).translate_point_in_z_axis(z_offset).project_to_2d(), game.width, game.height),
+    //             context,
     //         );
     //     }
     // }
     
+    current_frame++;
     setTimeout(draw_frame, 1000 / FPS); // reschedule next frame
 }
 
+// start the drawing loop
 setTimeout(draw_frame, 1000 / FPS); // 1000ms divided by FPS gives the interval in ms
