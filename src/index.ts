@@ -84,14 +84,14 @@ type LoadedObject = {
 };
 
 const loaded_objects: LoadedObject[] = [
-    {
-        object: cube,
-        moveSpeedPerFrame: new Point3D(0, 0, 0.00001),
-    },
-    {
-        object: cube2,
-        moveSpeedPerFrame: new Point3D(0, 0.00001, 0.0001),
-    },
+    // {
+    //     object: cube,
+    //     moveSpeedPerFrame: new Point3D(0, 0, 0.00001),
+    // },
+    // {
+    //     object: cube2,
+    //     moveSpeedPerFrame: new Point3D(0, 0.00001, 0.0001),
+    // },
 ];
 
 let currentFrame = 0;
