@@ -208,6 +208,8 @@ function renderLoadedObjectsList(): void {
 }
 
 let currentFrame = 0;
+let isRendering = true;
+let nextFrameTimeoutId: number | null = null;
 
 let show_axis_lines = true;
 
@@ -216,10 +218,40 @@ if (!(showAxisLinesInput instanceof HTMLInputElement)) {
     throw new Error("Checkbox with id 'show-axis-lines' not found");
 }
 
+const toggleRenderingButton = document.getElementById("toggle-rendering-button");
+if (!(toggleRenderingButton instanceof HTMLButtonElement)) {
+    throw new Error("Button with id 'toggle-rendering-button' not found");
+}
+
 show_axis_lines = showAxisLinesInput.checked;
 
 showAxisLinesInput.addEventListener("change", () => {
     show_axis_lines = showAxisLinesInput.checked;
+});
+
+function scheduleNextFrame(): void {
+    if (!isRendering) {
+        return;
+    }
+
+    nextFrameTimeoutId = window.setTimeout(drawFrame, 1000 / FPS);
+}
+
+toggleRenderingButton.addEventListener("click", () => {
+    isRendering = !isRendering;
+    toggleRenderingButton.textContent = isRendering
+        ? "Pause rendering"
+        : "Play rendering";
+
+    if (!isRendering && nextFrameTimeoutId !== null) {
+        window.clearTimeout(nextFrameTimeoutId);
+        nextFrameTimeoutId = null;
+        return;
+    }
+
+    if (isRendering && nextFrameTimeoutId === null) {
+        scheduleNextFrame();
+    }
 });
 
 const spawnCubeForm = document.getElementById("spawn-cube-form");
@@ -311,10 +343,10 @@ function drawFrame(): void {
     renderLoadedObjectsList();
 
     currentFrame += 1;
-    setTimeout(drawFrame, 1000 / FPS); // reschedule next frame
+    scheduleNextFrame();
 }
 
 renderLoadedObjectsList();
 
 // start the drawing loop
-setTimeout(drawFrame, 1000 / FPS); // 1000ms divided by FPS gives the interval in ms
+scheduleNextFrame();
