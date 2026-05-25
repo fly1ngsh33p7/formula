@@ -82,9 +82,25 @@ const loaded_objects: BaseObject[] = [cube, cube2];
 
 let currentFrame = 0;
 
+let show_axis_lines = true;
+
+const showAxisLinesInput = document.getElementById("show-axis-lines");
+if (!(showAxisLinesInput instanceof HTMLInputElement)) {
+    throw new Error("Checkbox with id 'show-axis-lines' not found");
+}
+
+show_axis_lines = showAxisLinesInput.checked;
+
+showAxisLinesInput.addEventListener("change", () => {
+    show_axis_lines = showAxisLinesInput.checked;
+});
+
 function drawFrame(): void {
-    clear(context);
-    // placeAxisLines(context);
+    clear(context); // clear frame before drawing new one
+
+    if (show_axis_lines) {
+        placeAxisLines(context);
+    }
 
     const deltaTime = 1 / FPS; // in seconds
 
