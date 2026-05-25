@@ -25,8 +25,8 @@ export class Point3D {
     }
 
     rotate_around_y_axis(angle_in_radians) { // equals rotating in the xz plane
-        let sin_angle = Math.sin(angle_in_radians);
-        let cos_angle = Math.cos(angle_in_radians);
+        const sin_angle = Math.sin(angle_in_radians);
+        const cos_angle = Math.cos(angle_in_radians);
         return new Point3D(
             (this.x * cos_angle - this.z * sin_angle),
             (this.y), // when rotating around y axis, y stays the same

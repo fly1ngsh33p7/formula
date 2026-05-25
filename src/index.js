@@ -61,7 +61,7 @@ let cube_vertices = [
 
 ]
 
-let faces = [ // indices of vertices that make up each face
+const faces = [ // indices of vertices that make up each face
     [0, 1, 2, 3], // front face
     [4, 5, 6, 7], // back face
     // connect pairs of vertices from front and back faces, making the side faces
@@ -71,10 +71,10 @@ let faces = [ // indices of vertices that make up each face
     [3, 7],
 ]
 
-let z_offset = 1;
-let rotation_angle = 0;
+const z_offset = 1;
+const rotation_angle = 0;
 
-let cube = new Cube(new Point3D(0, 0, 0), 0.5, game, context);
+const cube = new Cube(new Point3D(0, 0, 0), 0.5, game, context);
 
 let current_frame = 0;
 
@@ -82,7 +82,7 @@ function draw_frame() {
     clear(context);
     // place_axis_lines(context);
 
-    let delta_time = 1 / FPS; // in seconds
+    const delta_time = 1 / FPS; // in seconds
 
     // animate z_offset and rotation
     rotation_angle += Math.PI * delta_time; // 1 full rotation per second

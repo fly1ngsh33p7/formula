@@ -56,8 +56,8 @@ export class Cube extends BaseObject {
         // draw lines between vertices to create faces
         for (const face of this.faces) {
             for (let i = 0; i < face.length; i++) {
-                let vertex_a = this.vertices[face[i]];
-                let vertex_b = this.vertices[face[(i + 1) % face.length]]; // wrap around last to first vertex
+                const vertex_a = this.vertices[face[i]];
+                const vertex_b = this.vertices[face[(i + 1) % face.length]]; // wrap around last to first vertex
 
                 place_line(
                     get_on_screen_point_representation(vertex_a.rotate_around_y_axis(current_frame_time).project_to_2d(), this.game_reference.width, this.game_reference.height),
