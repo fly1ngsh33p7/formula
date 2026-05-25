@@ -86,9 +86,12 @@ function drawFrame(): void {
 
     // console.log("currentframe", current_frame);
 
-    // console.log("cube", cube);
+    console.log("cube before move", cube);
 
     cube.move(0, 0, currentFrame * 0.001);
+
+    console.log("cube after move", cube);
+
     cube.draw(currentFrame * deltaTime);
 
     currentFrame += 1;
