@@ -7,6 +7,7 @@ import {
     place_point,
     get_on_screen_point_representation,
 } from "./classes/common_stuff_that_needs_to_be_accessible_somewhere_else.js";
+import BaseObject from "./classes/BaseObject.js";
 
 const gameElement = document.getElementById("game");
 if (!(gameElement instanceof HTMLCanvasElement)) {
@@ -75,6 +76,9 @@ console.log(`Game size: ${game.width}x${game.height}`);
 clear(context);
 
 const cube = new Cube(new Point3D(0, 0, 1), 0.5, game, context);
+const cube2 = new Cube(new Point3D(0, 0, 0.1), 0.5, game, context);
+
+const loaded_objects: BaseObject[] = [cube, cube2];
 
 let currentFrame = 0;
 
@@ -87,8 +91,11 @@ function drawFrame(): void {
     // console.log("currentframe", current_frame);
 
     cube.move(0, 0, currentFrame * 0.00001);
+    cube2.move(0, currentFrame * 0.00001, currentFrame * 0.0001);
 
-    cube.draw(currentFrame * deltaTime);
+    for (const object of loaded_objects) {
+        object.draw(currentFrame * deltaTime);
+    }
 
     currentFrame += 1;
     setTimeout(drawFrame, 1000 / FPS); // reschedule next frame
