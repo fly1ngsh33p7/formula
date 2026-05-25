@@ -78,7 +78,21 @@ clear(context);
 const cube = new Cube(new Point3D(0, 0, 1), 0.5, game, context);
 const cube2 = new Cube(new Point3D(0, 0, 0.1), 0.5, game, context);
 
-const loaded_objects: BaseObject[] = [cube, cube2];
+type LoadedObject = {
+    object: BaseObject;
+    moveSpeedPerFrame: Point3D;
+};
+
+const loaded_objects: LoadedObject[] = [
+    {
+        object: cube,
+        moveSpeedPerFrame: new Point3D(0, 0, 0.00001),
+    },
+    {
+        object: cube2,
+        moveSpeedPerFrame: new Point3D(0, 0.00001, 0.0001),
+    },
+];
 
 let currentFrame = 0;
 
@@ -95,6 +109,63 @@ showAxisLinesInput.addEventListener("change", () => {
     show_axis_lines = showAxisLinesInput.checked;
 });
 
+const spawnCubeForm = document.getElementById("spawn-cube-form");
+if (!(spawnCubeForm instanceof HTMLFormElement)) {
+    throw new Error("Form with id 'spawn-cube-form' not found");
+}
+
+const spawnCubeSizeInput = document.getElementById("spawn-cube-size");
+const spawnCubeXInput = document.getElementById("spawn-cube-x");
+const spawnCubeYInput = document.getElementById("spawn-cube-y");
+const spawnCubeZInput = document.getElementById("spawn-cube-z");
+const spawnCubeSpeedXInput = document.getElementById("spawn-cube-speed-x");
+const spawnCubeSpeedYInput = document.getElementById("spawn-cube-speed-y");
+const spawnCubeSpeedZInput = document.getElementById("spawn-cube-speed-z");
+
+if (
+    !(spawnCubeSizeInput instanceof HTMLInputElement) ||
+    !(spawnCubeXInput instanceof HTMLInputElement) ||
+    !(spawnCubeYInput instanceof HTMLInputElement) ||
+    !(spawnCubeZInput instanceof HTMLInputElement) ||
+    !(spawnCubeSpeedXInput instanceof HTMLInputElement) ||
+    !(spawnCubeSpeedYInput instanceof HTMLInputElement) ||
+    !(spawnCubeSpeedZInput instanceof HTMLInputElement)
+) {
+    throw new Error("Spawn Cube inputs not found");
+}
+
+spawnCubeForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const size = spawnCubeSizeInput.valueAsNumber;
+    const x = spawnCubeXInput.valueAsNumber;
+    const y = spawnCubeYInput.valueAsNumber;
+    const z = spawnCubeZInput.valueAsNumber;
+    const speedX = spawnCubeSpeedXInput.valueAsNumber;
+    const speedY = spawnCubeSpeedYInput.valueAsNumber;
+    const speedZ = spawnCubeSpeedZInput.valueAsNumber;
+
+    if (
+        [size, x, y, z, speedX, speedY, speedZ].some(
+            (value) => Number.isNaN(value),
+        )
+    ) {
+        throw new Error("Spawn Cube form contains invalid numbers");
+    }
+
+    const cubeToSpawn = new Cube(new Point3D(x, y, z), size, game, context);
+
+    const new_loaded_object: LoadedObject = {
+        object: cubeToSpawn,
+        moveSpeedPerFrame: new Point3D(speedX, speedY, speedZ),
+    };
+
+
+    loaded_objects.push(new_loaded_object);
+
+    console.log("loaded_objects after adding another object", loaded_objects);
+});
+
 function drawFrame(): void {
     clear(context); // clear frame before drawing new one
 
@@ -106,11 +177,14 @@ function drawFrame(): void {
 
     // console.log("currentframe", current_frame);
 
-    cube.move(0, 0, currentFrame * 0.00001);
-    cube2.move(0, currentFrame * 0.00001, currentFrame * 0.0001);
+    for (const loadedObject of loaded_objects) {
+        loadedObject.object.move(
+            loadedObject.moveSpeedPerFrame.x,
+            loadedObject.moveSpeedPerFrame.y,
+            loadedObject.moveSpeedPerFrame.z,
+        );
 
-    for (const object of loaded_objects) {
-        object.draw(currentFrame * deltaTime);
+        loadedObject.object.draw(currentFrame * deltaTime);
     }
 
     currentFrame += 1;

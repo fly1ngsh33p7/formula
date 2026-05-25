@@ -3,4 +3,38 @@
 	<input id="show-axis-lines" type="checkbox" checked />
 	Show axis lines
 </label>
+<section id="spawn-cube-section" style="margin-top: 16px; font-family: sans-serif;">
+	<h2 style="margin: 0 0 8px; font-size: 1rem;">Spawn Cube</h2>
+	<form id="spawn-cube-form" style="display: grid; gap: 8px; max-width: 360px;">
+		<label>
+			Size
+			<input id="spawn-cube-size" type="number" step="any" value="0.5" />
+		</label>
+		<label>
+			X coordinate
+			<input id="spawn-cube-x" type="number" step="any" value="0" />
+		</label>
+		<label>
+			Y coordinate
+			<input id="spawn-cube-y" type="number" step="any" value="0" />
+		</label>
+		<label>
+			Z coordinate
+			<input id="spawn-cube-z" type="number" step="any" value="1" />
+		</label>
+		<label>
+			Move speed per frame X
+			<input id="spawn-cube-speed-x" type="number" step="any" value="0" />
+		</label>
+		<label>
+			Move speed per frame Y
+			<input id="spawn-cube-speed-y" type="number" step="any" value="0" />
+		</label>
+		<label>
+			Move speed per frame Z
+			<input id="spawn-cube-speed-z" type="number" step="any" value="0" />
+		</label>
+		<button type="submit">Spawn Cube</button>
+	</form>
+</section>
 <script type="module" src="./index.js"></script>
