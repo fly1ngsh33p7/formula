@@ -117,6 +117,7 @@ const cube = new Cube(new Point3D(0, 0, 1), 0.5);
 const cube2 = new Cube(new Point3D(0, 0, 0.1), 0.5);
 
 type LoadedObject = {
+    id: number;
     object: BaseObject;
     moveSpeedPerFrame: Point3D;
 };
@@ -131,6 +132,82 @@ const loaded_objects: LoadedObject[] = [
     //     moveSpeedPerFrame: new Point3D(0, 0.00001, 0.0001),
     // },
 ];
+
+let nextLoadedObjectId = 1;
+
+const loadedObjectsListElement = document.getElementById("loaded-objects-list");
+if (!(loadedObjectsListElement instanceof HTMLUListElement)) {
+    throw new Error("List with id 'loaded-objects-list' not found");
+}
+const loadedObjectsList: HTMLUListElement = loadedObjectsListElement;
+
+loadedObjectsList.addEventListener("pointerdown", (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLButtonElement)) {
+        return;
+    }
+
+    const loadedObjectIdText = target.dataset.loadedObjectId;
+    if (!loadedObjectIdText) {
+        return;
+    }
+
+    const loadedObjectId = Number(loadedObjectIdText);
+    if (Number.isNaN(loadedObjectId)) {
+        return;
+    }
+
+    const indexToRemove = loaded_objects.findIndex(
+        (loadedObject) => loadedObject.id === loadedObjectId,
+    );
+    if (indexToRemove < 0) {
+        return;
+    }
+
+    loaded_objects.splice(indexToRemove, 1);
+    renderLoadedObjectsList();
+});
+
+function getDistanceFromOrigin(point: Point3D): number {
+    return Math.sqrt(point.x ** 2 + point.y ** 2 + point.z ** 2);
+}
+
+function renderLoadedObjectsList(): void {
+    loadedObjectsList.innerHTML = "";
+
+    const loadedObjectsSortedByDistance = [...loaded_objects].sort((a, b) =>
+        getDistanceFromOrigin(a.object.position) -
+        getDistanceFromOrigin(b.object.position),
+    );
+
+    if (loadedObjectsSortedByDistance.length === 0) {
+        const emptyRow = document.createElement("li");
+        emptyRow.textContent = "No objects loaded.";
+        loadedObjectsList.appendChild(emptyRow);
+        return;
+    }
+
+    for (const loadedObject of loadedObjectsSortedByDistance) {
+        const row = document.createElement("li");
+        row.style.display = "flex";
+        row.style.alignItems = "center";
+        row.style.justifyContent = "space-between";
+        row.style.gap = "12px";
+
+        const distance = getDistanceFromOrigin(loadedObject.object.position);
+        const details = document.createElement("span");
+        details.textContent = `distance: ${distance.toFixed(4)} | position: (${loadedObject.object.position.x.toFixed(3)}, ${loadedObject.object.position.y.toFixed(3)}, ${loadedObject.object.position.z.toFixed(3)})`;
+
+        const removeButton = document.createElement("button");
+        removeButton.type = "button";
+        removeButton.textContent = "x";
+        removeButton.title = "Remove object";
+        removeButton.dataset.loadedObjectId = String(loadedObject.id);
+
+        row.append(details, removeButton);
+        loadedObjectsList.appendChild(row);
+    }
+}
 
 let currentFrame = 0;
 
@@ -194,12 +271,17 @@ spawnCubeForm.addEventListener("submit", (event) => {
     const cubeToSpawn = new Cube(new Point3D(x, y, z), size);
 
     const new_loaded_object: LoadedObject = {
+        id: nextLoadedObjectId,
         object: cubeToSpawn,
         moveSpeedPerFrame: new Point3D(speedX, speedY, speedZ),
     };
 
+    nextLoadedObjectId += 1;
+
 
     loaded_objects.push(new_loaded_object);
+
+    renderLoadedObjectsList();
 
     console.log("loaded_objects after adding another object", loaded_objects);
 });
@@ -228,9 +310,13 @@ function drawFrame(): void {
         );
     }
 
+    renderLoadedObjectsList();
+
     currentFrame += 1;
     setTimeout(drawFrame, 1000 / FPS); // reschedule next frame
 }
+
+renderLoadedObjectsList();
 
 // start the drawing loop
 setTimeout(drawFrame, 1000 / FPS); // 1000ms divided by FPS gives the interval in ms
