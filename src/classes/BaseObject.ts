@@ -32,8 +32,6 @@ export default abstract class BaseObject {
     }
 
     move(xOffset: number, yOffset: number, zOffset: number): void {
-        // console.log("moving BaseObject", { xOffset, yOffset, zOffset });
-
         // change the position of the object itself - the center point of the object
         this.position = this.position.translate_point_in_x_axis(xOffset);
         this.position = this.position.translate_point_in_y_axis(yOffset);
@@ -48,5 +46,23 @@ export default abstract class BaseObject {
         );
     }
 
-    abstract get_draw_instructions(currentFrameTime: number): DrawInstruction[];
+    get_draw_instructions(currentFrameTime: number): DrawInstruction[] {
+        return [
+            ...this.get_vertex_draw_instructions(),
+            ...this.get_object_specific_draw_instructions(currentFrameTime),
+        ];
+    }
+
+    private get_vertex_draw_instructions(): PointDrawInstruction[] {
+        return this.vertices.map((vertex) => ({
+            kind: "point",
+            point: vertex,
+            special: false,
+            size: { x: 10, y: 10 },
+        }));
+    }
+
+    protected abstract get_object_specific_draw_instructions(
+        currentFrameTime: number,
+    ): DrawInstruction[];
 }

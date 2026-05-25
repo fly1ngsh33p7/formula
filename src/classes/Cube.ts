@@ -69,19 +69,12 @@ export default class Cube extends BaseObject {
         ];
     }
 
-    get_draw_instructions(currentFrameTime: number): DrawInstruction[] {
+    protected get_object_specific_draw_instructions(
+        currentFrameTime: number,
+    ): DrawInstruction[] {
         void currentFrameTime;
 
         const instructions: DrawInstruction[] = [];
-
-        for (const vertex of this.vertices) {
-            instructions.push({
-                kind: "point",
-                point: vertex,
-                special: false,
-                size: { x: 10, y: 10 },
-            });
-        }
 
         for (const face of this.faces) {
             for (let index = 0; index < face.length; index += 1) {
