@@ -1,34 +1,15 @@
 import Point3D from "./Point3D.js";
-import BaseObject from "./BaseObject.js";
-import {
-    place_point,
-    get_on_screen_point_representation,
-    place_line,
-} from "./common_stuff_that_needs_to_be_accessible_somewhere_else.js";
+import BaseObject, { DrawInstruction } from "./BaseObject.js";
 
 export default class Cube extends BaseObject {
-    game_reference: HTMLCanvasElement;
-    context_reference: CanvasRenderingContext2D;
     side_length: number;
 
     constructor(
         position: Point3D,
         side_length: number,
-        game_reference: HTMLCanvasElement,
-        context_reference: CanvasRenderingContext2D,
     ) {
         super(position);
-        this.game_reference = game_reference;
-        this.context_reference = context_reference;
         this.side_length = side_length;
-
-
-        if(context_reference === undefined || game_reference === undefined) {
-            throw new Error("Cube constructor requires game_reference and context_reference");
-        } else {
-            // console.log(context_reference);
-            // console.log(game_reference);
-        }
 
         this.vertices = [
             // first, upper "plane"
@@ -88,46 +69,35 @@ export default class Cube extends BaseObject {
         ];
     }
 
-    draw(currentFrameTime: number): void {
-        // draw cube corner points
+    get_draw_instructions(currentFrameTime: number): DrawInstruction[] {
         void currentFrameTime;
 
-        // draw lines between vertices to create faces
+        const instructions: DrawInstruction[] = [];
+
         for (const vertex of this.vertices) {
-            place_point(
-                get_on_screen_point_representation(
-                    vertex.project_to_2d(),
-                    this.game_reference.width,
-                    this.game_reference.height,
-                ),
-                false,
-                { x: 10, y: 10 },
-                this.context_reference,
-            );
+            instructions.push({
+                kind: "point",
+                point: vertex,
+                special: false,
+                size: { x: 10, y: 10 },
+            });
         }
 
-        // draw lines between vertices to create faces
         for (const face of this.faces) {
             for (let index = 0; index < face.length; index += 1) {
                 const vertexA = this.vertices[face[index]];
                 const vertexB = this.vertices[face[(index + 1) % face.length]]; // wrap around last to first vertex
 
-                place_line(
-                    get_on_screen_point_representation(
-                        vertexA.project_to_2d(),
-                        this.game_reference.width,
-                        this.game_reference.height,
-                    ),
-                    get_on_screen_point_representation(
-                        vertexB.project_to_2d(),
-                        this.game_reference.width,
-                        this.game_reference.height,
-                    ),
-                    1,
-                    false,
-                    this.context_reference,
-                );
+                instructions.push({
+                    kind: "line",
+                    start: vertexA,
+                    end: vertexB,
+                    thickness: 1,
+                    special: false,
+                });
             }
         }
+
+        return instructions;
     }
 }

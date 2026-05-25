@@ -6,8 +6,9 @@ import {
     clear,
     place_point,
     get_on_screen_point_representation,
+    place_line,
 } from "./classes/common_stuff_that_needs_to_be_accessible_somewhere_else.js";
-import BaseObject from "./classes/BaseObject.js";
+import BaseObject, { DrawInstruction } from "./classes/BaseObject.js";
 
 const gameElement = document.getElementById("game");
 if (!(gameElement instanceof HTMLCanvasElement)) {
@@ -22,6 +23,43 @@ if (!canvasContext) {
 }
 
 const context: CanvasRenderingContext2D = canvasContext;
+
+function executeDrawInstructions(
+    instructions: DrawInstruction[],
+    canvasContext: CanvasRenderingContext2D,
+): void {
+    for (const instruction of instructions) {
+        if (instruction.kind === "point") {
+            place_point(
+                get_on_screen_point_representation(
+                    instruction.point.project_to_2d(),
+                    game.width,
+                    game.height,
+                ),
+                instruction.special ?? false,
+                instruction.size ?? { x: 10, y: 10 },
+                canvasContext,
+            );
+            continue;
+        }
+
+        place_line(
+            get_on_screen_point_representation(
+                instruction.start.project_to_2d(),
+                game.width,
+                game.height,
+            ),
+            get_on_screen_point_representation(
+                instruction.end.project_to_2d(),
+                game.width,
+                game.height,
+            ),
+            instruction.thickness ?? 1,
+            instruction.special ?? false,
+            canvasContext,
+        );
+    }
+}
 
 function placeAxisLines(canvasContext: CanvasRenderingContext2D): void {
     // x axis
@@ -75,8 +113,8 @@ console.log(`Game size: ${game.width}x${game.height}`);
 
 clear(context);
 
-const cube = new Cube(new Point3D(0, 0, 1), 0.5, game, context);
-const cube2 = new Cube(new Point3D(0, 0, 0.1), 0.5, game, context);
+const cube = new Cube(new Point3D(0, 0, 1), 0.5);
+const cube2 = new Cube(new Point3D(0, 0, 0.1), 0.5);
 
 type LoadedObject = {
     object: BaseObject;
@@ -153,7 +191,7 @@ spawnCubeForm.addEventListener("submit", (event) => {
         throw new Error("Spawn Cube form contains invalid numbers");
     }
 
-    const cubeToSpawn = new Cube(new Point3D(x, y, z), size, game, context);
+    const cubeToSpawn = new Cube(new Point3D(x, y, z), size);
 
     const new_loaded_object: LoadedObject = {
         object: cubeToSpawn,
@@ -184,7 +222,10 @@ function drawFrame(): void {
             loadedObject.moveSpeedPerFrame.z,
         );
 
-        loadedObject.object.draw(currentFrame * deltaTime);
+        executeDrawInstructions(
+            loadedObject.object.get_draw_instructions(currentFrame * deltaTime),
+            context,
+        );
     }
 
     currentFrame += 1;

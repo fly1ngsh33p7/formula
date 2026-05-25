@@ -1,5 +1,25 @@
 import Point3D from "./Point3D.js";
 
+export type PointDrawInstruction = {
+    kind: "point";
+    point: Point3D;
+    special?: boolean;
+    size?: {
+        x: number;
+        y: number;
+    };
+};
+
+export type LineDrawInstruction = {
+    kind: "line";
+    start: Point3D;
+    end: Point3D;
+    thickness?: number;
+    special?: boolean;
+};
+
+export type DrawInstruction = PointDrawInstruction | LineDrawInstruction;
+
 export default abstract class BaseObject {
     position: Point3D;
     vertices: Point3D[];
@@ -28,5 +48,5 @@ export default abstract class BaseObject {
         );
     }
 
-    abstract draw(currentFrameTime: number): void;
+    abstract get_draw_instructions(currentFrameTime: number): DrawInstruction[];
 }
