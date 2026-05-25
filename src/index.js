@@ -2,7 +2,7 @@ import { Point2D } from './classes/Point2D.js';
 import { Point3D } from './classes/Point3D.js';
 import { Cube } from './classes/Cube.js';
 import { BACKGROUND_COLOR, FOREGROUND_COLOR, LINE_COLOR, SPECIAL_COLOR, FPS } from './utils/constants.js';
-import { clear, place_point, get_on_screen_point_representation } from './classes/common_stuff_that_needs_to_be_accessible_somewhere_else.js';
+import { clear, place_point, get_on_screen_point_representation, place_line } from './classes/common_stuff_that_needs_to_be_accessible_somewhere_else.js';
 
 const game = document.getElementById("game");
 if (!game) {
@@ -35,7 +35,7 @@ clear(context);
 
 
 let cube_vertices = [
-    // first "plane"
+    // first "plane" (zentrum bei 0/0/0)
     new Point3D(0.25, 0.25, 0.25),  // vertex index 0
     new Point3D(-0.25, 0.25, 0.25), // vertex index 1
     new Point3D(-0.25, -0.25, 0.25), // vertex index 2
@@ -46,6 +46,19 @@ let cube_vertices = [
     new Point3D(-0.25, 0.25, -0.25),  // vertex index 5
     new Point3D(-0.25, -0.25, -0.25),  // vertex index 6
     new Point3D(0.25, -0.25, -0.25), // vertex index 7
+
+    // // first "plane" (vordere Fläche, Zentrum NICHT bei 0/0/0, sondern bei 0/0/2)
+    // new Point3D(0.25,  0.25,  2.25),  // vertex index 0
+    // new Point3D(-0.25, 0.25,  2.25),  // vertex index 1
+    // new Point3D(-0.25, -0.25, 2.25),  // vertex index 2
+    // new Point3D(0.25,  -0.25, 2.25),  // vertex index 3
+
+    // // second "plane" (hintere Fläche, vorher z = -0.25)
+    // new Point3D(0.25,  0.25,  1.75),  // vertex index 4
+    // new Point3D(-0.25, 0.25,  1.75),  // vertex index 5
+    // new Point3D(-0.25, -0.25, 1.75),  // vertex index 6
+    // new Point3D(0.25,  -0.25, 1.75),  // vertex index 7
+
 ]
 
 let faces = [ // indices of vertices that make up each face
@@ -61,7 +74,7 @@ let faces = [ // indices of vertices that make up each face
 let z_offset = 1;
 let rotation_angle = 0;
 
-let cube = new Cube(new Point3D(0.25, 0, 0.5), 0.2, game, context);
+let cube = new Cube(new Point3D(0, 0, 0), 0.5, game, context);
 
 let current_frame = 0;
 
@@ -92,6 +105,8 @@ function draw_frame() {
     //         place_line(
     //             get_on_screen_point_representation(vertex_a.rotate_around_y_axis(rotation_angle).translate_point_in_z_axis(z_offset).project_to_2d(), game.width, game.height),
     //             get_on_screen_point_representation(vertex_b.rotate_around_y_axis(rotation_angle).translate_point_in_z_axis(z_offset).project_to_2d(), game.width, game.height),
+    //             1,
+    //             true,
     //             context,
     //         );
     //     }

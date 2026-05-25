@@ -11,8 +11,8 @@ export class Cube extends Object {
         if(context_reference === undefined || game_reference === undefined) {
             throw new Error("Cube constructor requires game_reference and context_reference");
         } else {
-            console.log(context_reference);
-            console.log(game_reference);
+            // console.log(context_reference);
+            // console.log(game_reference);
         }
             
         this.side_length = side_length;
