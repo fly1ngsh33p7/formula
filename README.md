@@ -5,11 +5,11 @@ This is my implementation of https://www.youtube.com/watch?v=qjWkNZ0SXfo to tink
 To be able to use modules (classes) in JS you need to run a HTTP Server
 
 ```
-python3 -m http.server 8080
+python3 -m http.server 8000
 ```
 
 and then open 
 
 ```
-http://localhost:8080/index.html
+http://localhost:8000/src/index.html
 ```
