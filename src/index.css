@@ -1,0 +1,81 @@
+body {
+    font-family: "Georgia", "Times New Roman", serif;
+    color: #1f1f1f;
+    background: #f7f4ee;
+    margin: 16px;
+}
+
+#game {
+    display: block;
+}
+
+.control-label {
+    display: block;
+    margin-top: 12px;
+}
+
+.section {
+    margin-top: 16px;
+}
+
+.section-title {
+    margin: 0 0 8px;
+    font-size: 1rem;
+}
+
+#spawn-cube-form {
+    display: grid;
+    gap: 8px;
+    max-width: 360px;
+}
+
+#loaded-objects-section {
+    max-width: 520px;
+}
+
+#loaded-objects-list {
+    margin: 0;
+    padding: 10px;
+    border: 1px solid #3f3f3f;
+    background: #fffdf8;
+    list-style: none;
+}
+
+#loaded-objects-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border: 1px solid #6b6b6b;
+    padding: 8px 10px;
+    background: #ffffff;
+}
+
+#loaded-objects-list li + li {
+    margin-top: 8px;
+}
+
+#loaded-objects-list li::before {
+    content: "-";
+    margin-right: 10px;
+    color: #2a2a2a;
+    font-weight: 700;
+}
+
+#loaded-objects-list .object-row-details {
+    flex: 1;
+}
+
+.remove-object-button {
+    border: 1px solid #5a5a5a;
+    background: #efefef;
+    color: #111;
+    width: 28px;
+    height: 28px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.remove-object-button:hover {
+    background: #e2e2e2;
+}

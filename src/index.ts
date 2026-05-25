@@ -189,17 +189,15 @@ function renderLoadedObjectsList(): void {
 
     for (const loadedObject of loadedObjectsSortedByDistance) {
         const row = document.createElement("li");
-        row.style.display = "flex";
-        row.style.alignItems = "center";
-        row.style.justifyContent = "space-between";
-        row.style.gap = "12px";
 
         const distance = getDistanceFromOrigin(loadedObject.object.position);
         const details = document.createElement("span");
+        details.className = "object-row-details";
         details.textContent = `distance: ${distance.toFixed(4)} | position: (${loadedObject.object.position.x.toFixed(3)}, ${loadedObject.object.position.y.toFixed(3)}, ${loadedObject.object.position.z.toFixed(3)})`;
 
         const removeButton = document.createElement("button");
         removeButton.type = "button";
+        removeButton.className = "remove-object-button";
         removeButton.textContent = "x";
         removeButton.title = "Remove object";
         removeButton.dataset.loadedObjectId = String(loadedObject.id);
