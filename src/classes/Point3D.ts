@@ -1,6 +1,6 @@
-import { Point2D } from "./Point2D.js";
+import Point2D from "./Point2D";
 
-export class Point3D {
+export default class Point3D {
     x: number;
     y: number;
     z: number;

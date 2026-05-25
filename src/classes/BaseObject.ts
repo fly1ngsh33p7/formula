@@ -1,6 +1,6 @@
-import { Point3D } from "./Point3D.js";
+import Point3D from "./Point3D";
 
-export abstract class BaseObject {
+export default abstract class BaseObject {
     position: Point3D;
     vertices: Point3D[];
     faces: number[][];
