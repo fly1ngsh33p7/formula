@@ -69,4 +69,12 @@ export class Cube extends BaseObject {
             }
         }
     }
+
+    move(x_offset, y_offset, z_offset) {
+        console.log("moving cube", { x_offset, y_offset, z_offset });
+
+        this.position = this.position.translate_point_in_x_axis(x_offset);
+        this.position = this.position.translate_point_in_y_axis(y_offset);
+        this.position = this.position.translate_point_in_z_axis(z_offset);
+    }
 }

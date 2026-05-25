@@ -36,7 +36,7 @@ clear(context);
 let z_offset = 1;
 let rotation_angle = 0;
 
-const cube = new Cube(new Point3D(0, 0, 0), 0.5, game, context);
+const cube = new Cube(new Point3D(0, 0, 1), 0.5, game, context);
 
 let current_frame = 0;
 
@@ -51,7 +51,13 @@ function draw_frame() {
 
     z_offset += 1 * delta_time; // move 1 unit per second
 
+    // console.log("currentframe", current_frame);
+
+    // console.log("cube", cube);
+
+    cube.move(0, 0, current_frame * 0.001);
     cube.draw(current_frame * delta_time);
+    
 
     current_frame++;
     setTimeout(draw_frame, 1000 / FPS); // reschedule next frame

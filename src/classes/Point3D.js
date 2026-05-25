@@ -16,6 +16,22 @@ export class Point3D {
         );
     }
 
+    translate_point_in_x_axis(offset) {
+        return new Point3D(
+            (this.x + offset),
+            (this.y),
+            (this.z),
+        );
+    }
+
+    translate_point_in_y_axis(offset) {
+        return new Point3D(
+            (this.x),
+            (this.y + offset),
+            (this.z),
+        );
+    }
+
     translate_point_in_z_axis(offset) {
         return new Point3D(
             (this.x),
