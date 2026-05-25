@@ -1,12 +1,12 @@
 {
-  "name": "formula",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "build": "tsc -p tsconfig.json && node -e \"require('fs').copyFileSync('src/index.html', 'dist/index.html')\"",
-    "watch": "tsc -w -p tsconfig.json"
-  },
-  "devDependencies": {
-    "typescript": "^5.8.3"
-  }
+    "name": "formula",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "tsc -p tsconfig.json && node -e \"require('fs').copyFileSync('src/index.html', 'dist/index.html')\"",
+        "watch": "tsc -w -p tsconfig.json"
+    },
+    "devDependencies": {
+        "typescript": "^5.8.3"
+    }
 }
