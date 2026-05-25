@@ -1,10 +1,10 @@
-import Point2D from "./Point2D";
+import Point2D from "./Point2D.js";
 import {
     BACKGROUND_COLOR,
     FOREGROUND_COLOR,
     LINE_COLOR,
     SPECIAL_COLOR,
-} from "../utils/constants";
+} from "../utils/constants.js";
 
 type PointSize = {
     x: number;

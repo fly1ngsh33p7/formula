@@ -1,10 +1,10 @@
-import Point3D from "./Point3D";
-import BaseObject from "./BaseObject";
+import Point3D from "./Point3D.js";
+import BaseObject from "./BaseObject.js";
 import {
     place_point,
     get_on_screen_point_representation,
     place_line,
-} from "./common_stuff_that_needs_to_be_accessible_somewhere_else";
+} from "./common_stuff_that_needs_to_be_accessible_somewhere_else.js";
 
 export default class Cube extends BaseObject {
     game_reference: HTMLCanvasElement;

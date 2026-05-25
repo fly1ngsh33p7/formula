@@ -1,4 +1,4 @@
-import Point2D from "./Point2D";
+import Point2D from "./Point2D.js";
 
 export default class Point3D {
     x: number;

@@ -1,4 +1,4 @@
-import Point3D from "./Point3D";
+import Point3D from "./Point3D.js";
 
 export default abstract class BaseObject {
     position: Point3D;
