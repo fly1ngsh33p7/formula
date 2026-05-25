@@ -72,7 +72,7 @@ const faces = [ // indices of vertices that make up each face
 ]
 
 const z_offset = 1;
-const rotation_angle = 0;
+let rotation_angle = 0;
 
 const cube = new Cube(new Point3D(0, 0, 0), 0.5, game, context);
 
