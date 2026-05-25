@@ -60,8 +60,8 @@ export class Cube extends BaseObject {
                 const vertex_b = this.vertices[face[(i + 1) % face.length]]; // wrap around last to first vertex
 
                 place_line(
-                    get_on_screen_point_representation(vertex_a.rotate_around_y_axis(current_frame_time).project_to_2d(), this.game_reference.width, this.game_reference.height),
-                    get_on_screen_point_representation(vertex_b.rotate_around_y_axis(current_frame_time).project_to_2d(), this.game_reference.width, this.game_reference.height),
+                    get_on_screen_point_representation(vertex_a.project_to_2d(), this.game_reference.width, this.game_reference.height),
+                    get_on_screen_point_representation(vertex_b.project_to_2d(), this.game_reference.width, this.game_reference.height),
                     1,
                     false,
                     this.context_reference,
