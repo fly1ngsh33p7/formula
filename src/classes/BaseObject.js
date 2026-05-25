@@ -1,6 +1,6 @@
 import { Point3D } from './Point3D.js';
 
-export class Object {
+export class BaseObject {
     position;
     vertices;
     faces;
