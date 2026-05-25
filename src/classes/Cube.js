@@ -46,7 +46,7 @@ export class Cube extends BaseObject {
         // draw cube corner points
         for (const vertex of this.vertices) {
             place_point(
-                get_on_screen_point_representation(vertex.rotate_around_y_axis(current_frame_time).project_to_2d(), this.game_reference.width, this.game_reference.height),
+                get_on_screen_point_representation(vertex.project_to_2d(), this.game_reference.width, this.game_reference.height),
                 false,
                 { x: 10, y: 10 },
                 this.context_reference,
