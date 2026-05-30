@@ -147,6 +147,11 @@ loadedObjectsList.addEventListener("pointerdown", (event) => {
         return;
     }
 
+    const action = target.dataset.loadedObjectAction;
+    if (!action) {
+        return;
+    }
+
     const loadedObjectIdText = target.dataset.loadedObjectId;
     if (!loadedObjectIdText) {
         return;
@@ -157,13 +162,36 @@ loadedObjectsList.addEventListener("pointerdown", (event) => {
         return;
     }
 
-    const indexToRemove = loaded_objects.findIndex(
+    const loadedObject = loaded_objects.find(
         (loadedObject) => loadedObject.id === loadedObjectId,
+    );
+    if (!loadedObject) {
+        return;
+    }
+
+    if (action === "log") {
+        const distance = getDistanceFromOrigin(loadedObject.object.position);
+        const info = `distance: ${distance.toFixed(4)} | position: (${loadedObject.object.position.x.toFixed(3)}, ${loadedObject.object.position.y.toFixed(3)}, ${loadedObject.object.position.z.toFixed(3)})`;
+
+        console.log("loaded object info", {
+            id: loadedObject.id,
+            info,
+            moveSpeedPerFrame: loadedObject.moveSpeedPerFrame,
+        });
+        console.log("loaded object instance", loadedObject.object);
+        return;
+    }
+
+    if (action !== "remove") {
+        return;
+    }
+
+    const indexToRemove = loaded_objects.findIndex(
+        (item) => item.id === loadedObjectId,
     );
     if (indexToRemove < 0) {
         return;
     }
-
     loaded_objects.splice(indexToRemove, 1);
     renderLoadedObjectsList();
 });
@@ -200,9 +228,18 @@ function renderLoadedObjectsList(): void {
         removeButton.className = "remove-object-button";
         removeButton.textContent = "x";
         removeButton.title = "Remove object";
+        removeButton.dataset.loadedObjectAction = "remove";
         removeButton.dataset.loadedObjectId = String(loadedObject.id);
 
-        row.append(details, removeButton);
+        const logButton = document.createElement("button");
+        logButton.type = "button";
+        logButton.className = "log-object-button";
+        logButton.textContent = "log";
+        logButton.title = "Log object";
+        logButton.dataset.loadedObjectAction = "log";
+        logButton.dataset.loadedObjectId = String(loadedObject.id);
+
+        row.append(details, logButton, removeButton);
         loadedObjectsList.appendChild(row);
     }
 }
