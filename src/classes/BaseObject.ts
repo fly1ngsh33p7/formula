@@ -54,12 +54,21 @@ export default abstract class BaseObject {
     }
 
     private get_vertex_draw_instructions(): PointDrawInstruction[] {
-        return this.vertices.map((vertex) => ({
-            kind: "point",
-            point: vertex,
-            special: false,
-            size: { x: 10, y: 10 },
-        }));
+        return this.vertices.map((vertex) => {
+            const distance = Math.sqrt(
+                vertex.x ** 2 + vertex.y ** 2 + vertex.z ** 2
+            );
+
+            // size decreases with distance; clamp to a small minimum
+            const pixelSize = Math.max(2, Math.round(12 / (0.5 * distance + 1)));
+
+            return {
+                kind: "point",
+                point: vertex,
+                special: false,
+                size: { x: pixelSize, y: pixelSize },
+            };
+        });
     }
 
     protected abstract get_object_specific_draw_instructions(
