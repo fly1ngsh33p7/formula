@@ -192,6 +192,7 @@ function renderLoadedObjectsList(): void {
         a.object.position.get_distance_from_origin() - b.object.position.get_distance_from_origin(),
     );
 
+    // if there are no loaded objects, show a message about it
     if (loadedObjectsSortedByDistance.length === 0) {
         const emptyRow = document.createElement("li");
         emptyRow.textContent = "No objects loaded.";
@@ -199,13 +200,16 @@ function renderLoadedObjectsList(): void {
         return;
     }
 
+    // fill the list
     for (const loadedObject of loadedObjectsSortedByDistance) {
         const row = document.createElement("li");
 
+        // Info-span about the object
         const details = document.createElement("span");
         details.className = "object-row-details";
-        details.textContent = `distance: ${loadedObject.object.position.get_distance_from_origin().toFixed(4)} | position: (${loadedObject.object.position.x.toFixed(3)}, ${loadedObject.object.position.y.toFixed(3)}, ${loadedObject.object.position.z.toFixed(3)})`;
+        details.textContent = `distance: ${loadedObject.object.position.get_distance_from_origin().toFixed(3)} | position: (${loadedObject.object.position.x.toFixed(3)}, ${loadedObject.object.position.y.toFixed(3)}, ${loadedObject.object.position.z.toFixed(3)}) | is_visible: ${loadedObject.object.is_visible()}`;
 
+        // remove button
         const removeButton = document.createElement("button");
         removeButton.type = "button";
         removeButton.className = "remove-object-button";
@@ -214,6 +218,7 @@ function renderLoadedObjectsList(): void {
         removeButton.dataset.loadedObjectAction = "remove";
         removeButton.dataset.loadedObjectId = String(loadedObject.id);
 
+        // log button
         const logButton = document.createElement("button");
         logButton.type = "button";
         logButton.className = "log-object-button";
@@ -221,6 +226,7 @@ function renderLoadedObjectsList(): void {
         logButton.title = "Log object";
         logButton.dataset.loadedObjectAction = "log";
         logButton.dataset.loadedObjectId = String(loadedObject.id);
+
 
         row.append(details, logButton, removeButton);
         loadedObjectsList.appendChild(row);

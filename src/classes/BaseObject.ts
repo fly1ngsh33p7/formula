@@ -57,7 +57,7 @@ export default abstract class BaseObject {
         ];
     }
 
-    protected is_visible(): boolean {
+    public is_visible(): boolean {
         if (this.position.z < 0.13) {
             // skip rendering objects that are very close to the camera/z=0 (causes visual bug)
             // or behind the camera (doesn't need to be rendered, but is kept in the list, and keeps moving)
