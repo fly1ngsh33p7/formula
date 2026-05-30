@@ -46,21 +46,31 @@ export default abstract class BaseObject {
         );
     }
 
-    get_draw_instructions(currentFrameTime: number): DrawInstruction[] {
+    public get_draw_instructions(currentFrameTime: number): DrawInstruction[] {
+        if (!this.is_visible()) {
+            return [];
+        }
+
         return [
             ...this.get_vertex_draw_instructions(),
             ...this.get_object_specific_draw_instructions(currentFrameTime),
         ];
     }
 
+    protected is_visible(): boolean {
+        if (this.position.z < 0.13) {
+            // skip rendering objects that are very close to the camera/z=0 (causes visual bug)
+            // or behind the camera (doesn't need to be rendered, but is kept in the list, and keeps moving)
+            return false;
+        }
+
+        return true;
+    }
+
     private get_vertex_draw_instructions(): PointDrawInstruction[] {
         return this.vertices.map((vertex) => {
-            const distance = Math.sqrt(
-                vertex.x ** 2 + vertex.y ** 2 + vertex.z ** 2
-            );
-
             // size decreases with distance; clamp to a small minimum
-            const pixelSize = Math.max(2, Math.round(12 / (0.5 * distance + 1)));
+            const pixelSize = Math.max(2, Math.round(12 / (0.5 * vertex.get_distance_from_origin() + 1)));
 
             return {
                 kind: "point",

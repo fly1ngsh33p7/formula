@@ -28,7 +28,9 @@ function executeDrawInstructions(
     instructions: DrawInstruction[],
     canvasContext: CanvasRenderingContext2D,
 ): void {
+    // apply for each instruction (i.e. each Object)
     for (const instruction of instructions) {
+        // execute the instruction according to its type
         if (instruction.kind === "point") {
             place_point(
                 get_on_screen_point_representation(
@@ -41,23 +43,23 @@ function executeDrawInstructions(
                 canvasContext,
             );
             continue;
+        } else if (instruction.kind === "line") {   
+            place_line(
+                get_on_screen_point_representation(
+                    instruction.start.project_to_2d(),
+                    game.width,
+                    game.height,
+                ),
+                get_on_screen_point_representation(
+                    instruction.end.project_to_2d(),
+                    game.width,
+                    game.height,
+                ),
+                instruction.thickness ?? 1,
+                instruction.special ?? false,
+                canvasContext,
+            );
         }
-
-        place_line(
-            get_on_screen_point_representation(
-                instruction.start.project_to_2d(),
-                game.width,
-                game.height,
-            ),
-            get_on_screen_point_representation(
-                instruction.end.project_to_2d(),
-                game.width,
-                game.height,
-            ),
-            instruction.thickness ?? 1,
-            instruction.special ?? false,
-            canvasContext,
-        );
     }
 }
 
@@ -113,25 +115,13 @@ console.log(`Game size: ${game.width}x${game.height}`);
 
 clear(context);
 
-const cube = new Cube(new Point3D(0, 0, 1), 0.5);
-const cube2 = new Cube(new Point3D(0, 0, 0.1), 0.5);
-
 type LoadedObject = {
     id: number;
     object: BaseObject;
     moveSpeedPerFrame: Point3D;
 };
 
-const loaded_objects: LoadedObject[] = [
-    // {
-    //     object: cube,
-    //     moveSpeedPerFrame: new Point3D(0, 0, 0.00001),
-    // },
-    // {
-    //     object: cube2,
-    //     moveSpeedPerFrame: new Point3D(0, 0.00001, 0.0001),
-    // },
-];
+const loaded_objects: LoadedObject[] = [];
 
 let nextLoadedObjectId = 1;
 
@@ -170,8 +160,7 @@ loadedObjectsList.addEventListener("pointerdown", (event) => {
     }
 
     if (action === "log") {
-        const distance = getDistanceFromOrigin(loadedObject.object.position);
-        const info = `distance: ${distance.toFixed(4)} | position: (${loadedObject.object.position.x.toFixed(3)}, ${loadedObject.object.position.y.toFixed(3)}, ${loadedObject.object.position.z.toFixed(3)})`;
+        const info = `distance: ${loadedObject.object.position.get_distance_from_origin().toFixed(3)} | position: (${loadedObject.object.position.x.toFixed(3)}, ${loadedObject.object.position.y.toFixed(3)}, ${loadedObject.object.position.z.toFixed(3)})`;
 
         console.log("loaded object info", {
             id: loadedObject.id,
@@ -196,16 +185,11 @@ loadedObjectsList.addEventListener("pointerdown", (event) => {
     renderLoadedObjectsList();
 });
 
-function getDistanceFromOrigin(point: Point3D): number {
-    return Math.sqrt(point.x ** 2 + point.y ** 2 + point.z ** 2);
-}
-
 function renderLoadedObjectsList(): void {
     loadedObjectsList.innerHTML = "";
 
     const loadedObjectsSortedByDistance = [...loaded_objects].sort((a, b) =>
-        getDistanceFromOrigin(a.object.position) -
-        getDistanceFromOrigin(b.object.position),
+        a.object.position.get_distance_from_origin() - b.object.position.get_distance_from_origin(),
     );
 
     if (loadedObjectsSortedByDistance.length === 0) {
@@ -218,10 +202,9 @@ function renderLoadedObjectsList(): void {
     for (const loadedObject of loadedObjectsSortedByDistance) {
         const row = document.createElement("li");
 
-        const distance = getDistanceFromOrigin(loadedObject.object.position);
         const details = document.createElement("span");
         details.className = "object-row-details";
-        details.textContent = `distance: ${distance.toFixed(4)} | position: (${loadedObject.object.position.x.toFixed(3)}, ${loadedObject.object.position.y.toFixed(3)}, ${loadedObject.object.position.z.toFixed(3)})`;
+        details.textContent = `distance: ${loadedObject.object.position.get_distance_from_origin().toFixed(4)} | position: (${loadedObject.object.position.x.toFixed(3)}, ${loadedObject.object.position.y.toFixed(3)}, ${loadedObject.object.position.z.toFixed(3)})`;
 
         const removeButton = document.createElement("button");
         removeButton.type = "button";

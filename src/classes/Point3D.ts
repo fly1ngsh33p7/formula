@@ -11,25 +11,30 @@ export default class Point3D {
         this.z = z;
     }
 
-    project_to_2d(): Point2D {
+    public project_to_2d(): Point2D {
         // "the formula"
         // this formula assumes a perspective projection where the viewer is looking along the z-axis (in positve direction) and the eye is at 0/0/0
         return new Point2D(this.x / this.z, this.y / this.z);
     }
 
-    translate_point_in_x_axis(offset: number): Point3D {
+    public get_distance_from_origin(): number {
+        // euclidean distance from the origin (0, 0, 0) to this point
+        return Math.sqrt(this.x ** 2 + this.y ** 2 + this.z ** 2);
+    }
+
+    public translate_point_in_x_axis(offset: number): Point3D {
         return new Point3D(this.x + offset, this.y, this.z);
     }
 
-    translate_point_in_y_axis(offset: number): Point3D {
+    public translate_point_in_y_axis(offset: number): Point3D {
         return new Point3D(this.x, this.y + offset, this.z);
     }
 
-    translate_point_in_z_axis(offset: number): Point3D {
+    public translate_point_in_z_axis(offset: number): Point3D {
         return new Point3D(this.x, this.y, this.z + offset);
     }
 
-    rotate_around_y_axis(angle_in_radians: number): Point3D {
+    public rotate_around_y_axis(angle_in_radians: number): Point3D {
         // equals rotating in the xz plane
         const sin_angle = Math.sin(angle_in_radians);
         const cos_angle = Math.cos(angle_in_radians);
