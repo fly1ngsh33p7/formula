@@ -45,4 +45,10 @@ export default class Point3D {
             this.x * sin_angle + this.z * cos_angle,
         );
     }
+
+    public is_visible(): boolean {
+        // a point is visible if it's in front (z: positive) of the camera/z=0
+        // if it's not visible, it doesn't need to be rendered, but is kept in the list, and keeps moving.
+        return this.z > 0/*.13*/;   
+    }
 }

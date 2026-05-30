@@ -77,17 +77,21 @@ export default class Cube extends BaseObject {
         const instructions: DrawInstruction[] = [];
 
         for (const face of this.faces) {
-            for (let index = 0; index < face.length; index += 1) {
-                const vertexA = this.vertices[face[index]];
-                const vertexB = this.vertices[face[(index + 1) % face.length]]; // wrap around last to first vertex
+            // draw edge
+            for (let face_index = 0; face_index < face.length; face_index++) {
+                const vertexA = this.vertices[face[face_index]];
+                const vertexB = this.vertices[face[(face_index + 1) % face.length]]; // wrap around last to first vertex
 
-                instructions.push({
-                    kind: "line",
-                    start: vertexA,
-                    end: vertexB,
-                    thickness: 1,
-                    special: false,
-                });
+                // only draw edge if (FIXME:) one of the vertices is visible // FIXME: this should be moved to BaseObject! (maybe a draw_face/draw_edge/draw_line functionality)
+                if (vertexA.is_visible() && vertexB.is_visible()) { // this SHOULD be '||', but "the formula" - I think - causes weird stuff to happen when flipping from z:+0.001 to z:-0.001 (I think it's "wrapping around", because of the division in "the formula")
+                    instructions.push({
+                        kind: "line",
+                        start: vertexA,
+                        end: vertexB,
+                        thickness: 1,
+                        special: false,
+                    });
+                }
             }
         }
 

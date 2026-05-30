@@ -47,10 +47,6 @@ export default abstract class BaseObject {
     }
 
     public get_draw_instructions(currentFrameTime: number): DrawInstruction[] {
-        if (!this.is_visible()) {
-            return [];
-        }
-
         return [
             ...this.get_vertex_draw_instructions(),
             ...this.get_object_specific_draw_instructions(currentFrameTime),
@@ -58,27 +54,31 @@ export default abstract class BaseObject {
     }
 
     public is_visible(): boolean {
-        if (this.position.z < 0.13) {
-            // skip rendering objects that are very close to the camera/z=0 (causes visual bug)
-            // or behind the camera (doesn't need to be rendered, but is kept in the list, and keeps moving)
-            return false;
+        // an object is visible if just a single of its vertices are in front (z: positive) of the camera/z=0 (if z < 0.13 -> causes visual bug)
+        // it it's not visible, it doesn't need to be rendered, but is kept in the list, and keeps moving.
+        for (const vertex of this.vertices) {
+            if (vertex.is_visible()) { // let Point3D decide if it's visible
+                return true;
+            }
         }
 
-        return true;
+        return false;
     }
 
     private get_vertex_draw_instructions(): PointDrawInstruction[] {
-        return this.vertices.map((vertex) => {
-            // size decreases with distance; clamp to a small minimum
-            const pixelSize = Math.max(2, Math.round(12 / (0.5 * vertex.get_distance_from_origin() + 1)));
+        return this.vertices
+            .filter((vertex) => vertex.is_visible()) // only draw vertices that are visible (in front of the camera)
+            .map((vertex) => {
+                // size decreases with distance; clamp to a small minimum
+                const pixelSize = Math.max(2, Math.round(12 / (0.5 * vertex.get_distance_from_origin() + 1)));
 
-            return {
-                kind: "point",
-                point: vertex,
-                special: false,
-                size: { x: pixelSize, y: pixelSize },
-            };
-        });
+                return {
+                    kind: "point",
+                    point: vertex,
+                    special: false,
+                    size: { x: pixelSize, y: pixelSize },
+                };
+            });
     }
 
     protected abstract get_object_specific_draw_instructions(
